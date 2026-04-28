@@ -5,6 +5,7 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
+// Chat endpoint — Anthropic Claude
 app.post('/api/chat', async (req, res) => {
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -50,4 +51,4 @@ app.post('/api/image', async (req, res) => {
 app.get('/', (req, res) => res.send('NADAO Proxy OK'));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Running on ${PORT}`));
+app.listen(PORT, () => console.log(`Running on port ${PORT}`));
