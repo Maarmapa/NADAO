@@ -5,14 +5,13 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
-// Chat endpoint — Anthropic Claude
 app.post('/api/chat', async (req, res) => {
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.API_KEY,
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify(req.body)
@@ -32,7 +31,7 @@ app.post('/api/image', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.XAI_API_KEY}`
+        'Authorization': `Bearer ${process.env['XAI.API.KEY']}`
       },
       body: JSON.stringify({
         model: 'grok-2-image',
@@ -51,4 +50,4 @@ app.post('/api/image', async (req, res) => {
 app.get('/', (req, res) => res.send('NADAO Proxy OK'));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Running on ${PORT}`));
