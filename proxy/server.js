@@ -42,7 +42,7 @@ app.post('/api/image', async (req, res) => {
       },
       body: JSON.stringify({
         model: 'grok-imagine-image',
-        prompt: prompt,
+        prompt: prompt + ' Vertical portrait 9:16 aspect ratio, Instagram Reel format.',
         n: 1,
         response_format: 'url'
       })
