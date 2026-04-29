@@ -41,7 +41,7 @@ app.post('/api/image', async (req, res) => {
         'Authorization': 'Bearer ' + process.env.GROK_KEY
       },
       body: JSON.stringify({
-        model: 'grok-2-image',
+        model: 'aurora',
         prompt: prompt,
         n: 1,
         response_format: 'url'
