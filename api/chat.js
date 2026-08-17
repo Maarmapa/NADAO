@@ -1,5 +1,16 @@
 // NADAO /api/chat — puente OpenRouter con fallback a Anthropic (patrón Boykot).
 // El HTML habla formato Anthropic; acá se traduce ida y vuelta.
+const { rateLimit } = require('../lib/rate-limit');
+
+// 20 mensajes / 15 min por IP. En memoria por instancia: mitiga abuso casual,
+// no un ataque distribuido (ver lib/rate-limit.js).
+const limit = rateLimit({ name: 'chat', windowMs: 15 * 60 * 1000, max: 20 });
+
+// CORS abierto A PROPÓSITO: el homenaje vive también en IPFS/ENS
+// (nadaone.eth.limo/nadao-agente.html, y las gateways cambian: eth.limo,
+// eth.link, ipfs.io...) y su chat llama al API desde otro origen. Cerrar el
+// origen rompería "Hablar con NADAO" fuera del dominio Vercel. CORS de todos
+// modos no frena a curl: la protección real contra el gasto es el rate limit.
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
@@ -10,6 +21,7 @@ module.exports = async (req, res) => {
   cors(res);
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
   if (req.method !== 'POST') { res.status(405).json({ error: 'method' }); return; }
+  if (!limit(req, res)) return; // ya respondió 429 con Retry-After
   try {
     if (process.env.OPENROUTER_API_KEY && process.env.NADAO_PROVIDER !== 'anthropic') {
       try {
